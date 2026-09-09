@@ -778,7 +778,7 @@ h1 {
   top: 47.6%;
   width: 24%;
   height: 11%;
-  background-image: url('/images/door.png');
+  background-image: var(--door-image);
   background-size: 520% 910%;
   background-position: 86.6% 53.45%;
   transform-origin: 80% 50%;

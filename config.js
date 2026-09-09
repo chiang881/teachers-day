@@ -1,13 +1,14 @@
 /** 修改这里即可替换双语祝福、同学、音乐与视频。 */
-// GitHub Pages 项目站点会部署在 /仓库名/ 下；本地开发时保持空前缀。
-const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? '').replace(/\/$/, '');
-const asset = (path) => `${basePath}${path}`;
+const mediaRoot =
+  'https://ik.imagekit.io/1fwccoblm/teachers-day/teachers-day-imagekit-upload.OVeonn';
+const asset = (name) => `${mediaRoot}/${name}`;
 
 const config = {
   brand: {
-    logoIcon: asset('/images/brand/class-emblem-icon.png'),
-    logoWeb: asset('/images/brand/class-emblem-web.webp'),
-    logoFull: asset('/images/brand/class-emblem.png'),
+    logoIcon: asset('class-emblem-icon.png'),
+    logoWeb: asset('class-emblem-web.webp'),
+    logoFull: asset('class-emblem.png'),
+    favicon: asset('favicon.svg'),
   },
   emojis: [
     '🐯',
@@ -37,11 +38,11 @@ const config = {
     '😺',
   ],
   music: {
-    src: asset('/audio/top-of-the-world.mp3'),
+    src: asset('top-of-the-world.mp3'),
     title: 'Top Of The World',
     artist: 'Carpenters',
     album: 'A Song for You',
-    cover: asset('/images/a-song-for-you.jpg'),
+    cover: asset('a-song-for-you.jpg'),
     loop: true,
     volume: 0.45,
     videoDuckVolume: 0.1,
@@ -52,13 +53,13 @@ const config = {
     muted: false,
   },
   artwork: {
-    hallway: asset('/images/hallway.png'),
-    door: asset('/images/door.png'),
-    envelope: asset('/images/envelope.png'),
+    hallway: asset('hallway.png'),
+    door: asset('door.png'),
+    envelope: asset('envelope.png'),
   },
   gift: {
-    artwork: asset('/images/jujube-gift.png'),
-    model: asset('/models/hongzao-red-date.glb'),
+    artwork: asset('jujube-gift.png'),
+    model: asset('hongzao-red-date.glb'),
   },
   locales: {
     zh: {

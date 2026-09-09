@@ -103,6 +103,24 @@ function preloadImage(src: string, signal: AbortSignal): Promise<void> {
     image.src = src;
   });
 }
+async function preloadFile(src: string, signal: AbortSignal): Promise<void> {
+  const timeout = new AbortController();
+  const cancel = () => timeout.abort();
+  const timer = setTimeout(cancel, 15000);
+  signal.addEventListener('abort', cancel, { once: true });
+  try {
+    if (signal.aborted) throw new Error('File load cancelled');
+    const response = await fetch(src, {
+      cache: 'force-cache',
+      signal: timeout.signal,
+    });
+    if (!response.ok) throw new Error(`File load failed: ${response.status}`);
+    await response.arrayBuffer();
+  } finally {
+    clearTimeout(timer);
+    signal.removeEventListener('abort', cancel);
+  }
+}
 export default function Home() {
   const [locale, setLocale] = useState<Locale>('zh');
   const [localized, setLocalized] = useState(false);
@@ -174,7 +192,7 @@ export default function Home() {
       if (active) setSlow(true);
     }, 8000);
     const art = Promise.all(
-      [...Object.values(config.artwork), config.brand.logoWeb].map((src) =>
+      Object.values(config.artwork).map((src) =>
         preloadImage(src, lifecycle.signal),
       ),
     )
@@ -193,8 +211,18 @@ export default function Home() {
       .catch(() => {
         if (active) setCoverFailed(true);
       });
+    const supportingFiles = Promise.allSettled([
+      ...Object.values(config.brand).map((src) =>
+        preloadImage(src, lifecycle.signal),
+      ),
+      cover,
+      preloadImage(config.gift.artwork, lifecycle.signal),
+      preloadFile(config.gift.model, lifecycle.signal),
+      preloadFile(config.video.src, lifecycle.signal),
+    ]);
     void Promise.all([
       art,
+      supportingFiles,
       cover,
       instance.preload(),
       new Promise((resolve) => {
@@ -587,7 +615,7 @@ export default function Home() {
             {scene === 'loading' && (
               <div className="loading-emblem" aria-hidden="true">
                 <picture>
-                  <source srcSet={config.brand.logoWeb} type="image/webp" />
+                  <source srcSet={config.brand.logoWeb} />
                   <img
                     src={config.brand.logoIcon}
                     srcSet={`${config.brand.logoIcon} 192w, ${config.brand.logoFull} 2048w`}
@@ -610,6 +638,11 @@ export default function Home() {
               />
               <div
                 className={`door-leaf ${openedScenes.has(scene) || scene === 'opening' ? 'is-open' : ''} ${scene === 'knocking' ? 'is-knocking' : ''} ${scene === 'auto2' ? 'handle-wiggle' : ''}`}
+                style={
+                  {
+                    '--door-image': `url("${config.artwork.door}")`,
+                  } as CSSProperties
+                }
               >
                 <img src={config.artwork.door} alt="" />
                 <span className="door-sign">{t.teacher.doorSign}</span>

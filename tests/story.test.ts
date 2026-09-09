@@ -166,7 +166,15 @@ test('Both languages supply identical content interfaces and full letter paragra
   assert.equal(config.locales.en.gift.steps.length, 3);
   assert.equal(config.video.autoplay, false);
   assert.match(config.video.src, /^https:\/\//);
-  assert.equal(config.gift.model, '/models/hongzao-red-date.glb');
+  assert.match(config.gift.model, /^https:\/\/ik\.imagekit\.io\//);
+  for (const source of [
+    ...Object.values(config.brand),
+    config.music.src,
+    config.music.cover,
+    ...Object.values(config.artwork),
+    config.gift.artwork,
+  ])
+    assert.match(source, /^https:\/\/ik\.imagekit\.io\//);
   assert.equal(
     `${config.locales.zh.ui.achievementUnlocked}${config.locales.zh.ui.achievementEmptyOffice}`,
     '达成成就：此地无银三百两',

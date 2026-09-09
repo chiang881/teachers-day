@@ -136,7 +136,7 @@ export default function SurpriseVideo({
             controls={revealed}
             playsInline
             muted={muted}
-            preload="metadata"
+            preload="auto"
             tabIndex={revealed ? 0 : -1}
             onLoadedMetadata={() => {
               const element = media.current;
