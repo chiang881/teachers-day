@@ -448,7 +448,7 @@ export default function Home() {
     : audio.wanted
       ? t.ui.pause
       : t.ui.play;
-  let caption = t.story.waiting;
+  let caption = '';
   if (scene === 'loading') caption = localized ? t.ui.loading : '…';
   else if (scene === 'knocking' || scene === 'noticed' || scene === 'choice')
     caption = t.story.knockingText;
@@ -708,7 +708,7 @@ export default function Home() {
             aria-hidden={showingVideo || showingGift}
             inert={showingVideo || showingGift}
           >
-            {scene !== 'permission' && (
+            {scene !== 'permission' && scene !== 'waiting' && (
               <p
                 className="story-caption"
                 aria-live="polite"

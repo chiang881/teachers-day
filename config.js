@@ -102,7 +102,6 @@ const config = {
         videoHint: '先把这份惊喜送给您',
         surprise: '老师，教师节快乐！',
         opening: '是谁在门外呢？',
-        waiting: '今天，有一份特别的心意。',
       },
       letter: {
         greeting: '亲爱的老师：',
@@ -213,7 +212,6 @@ const config = {
         videoHint: 'A little surprise, just for you',
         surprise: 'Happy Teachers’ Day!',
         opening: 'Who could it be?',
-        waiting: 'A little something, just for you.',
       },
       letter: {
         greeting: 'Dear Teacher,',
