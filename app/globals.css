@@ -1365,9 +1365,18 @@ h1 {
 .gift-sprite-base img {
   transform: translateY(-50%);
 }
+.gift-sprite-closed-base {
+  top: 37%;
+}
+.gift-sprite-closed-base img {
+  transform: translateY(-78%);
+}
 .gift-sprite-lid {
   top: 6%;
   z-index: 2;
+}
+.gift-box-button .gift-sprite-lid {
+  top: 12%;
 }
 .gift-seal {
   position: absolute;
@@ -1422,6 +1431,7 @@ h1 {
 .gift-intro {
   position: relative;
   z-index: 3;
+  margin-top: clamp(22px, 4vw, 34px);
   padding-bottom: 10px;
   animation: gift-scene-return 0.9s ease both;
 }
@@ -1714,6 +1724,9 @@ h1 {
   }
   .gift-experience.is-wrapped .gift-visual {
     height: 330px;
+  }
+  .gift-experience.is-wrapped .gift-intro {
+    margin-top: 28px;
   }
   .gift-experience .primary-button {
     font-size: 15px !important;
