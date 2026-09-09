@@ -450,7 +450,6 @@ export default function Home() {
       : t.ui.play;
   let caption = t.story.waiting;
   if (scene === 'loading') caption = localized ? t.ui.loading : '…';
-  else if (scene === 'permission') caption = t.ui.soundNote;
   else if (scene === 'knocking' || scene === 'noticed' || scene === 'choice')
     caption = t.story.knockingText;
   else if (scene === 'refuse') caption = t.story.refuseText;
@@ -709,12 +708,18 @@ export default function Home() {
             aria-hidden={showingVideo || showingGift}
             inert={showingVideo || showingGift}
           >
-            <p className="story-caption" aria-live="polite" aria-atomic="true">
-              {scene === 'envelope' && (
-                <ArrowUp className="swipe-arrow" size={20} />
-              )}
-              <span>{caption}</span>
-            </p>
+            {scene !== 'permission' && (
+              <p
+                className="story-caption"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                {scene === 'envelope' && (
+                  <ArrowUp className="swipe-arrow" size={20} />
+                )}
+                <span>{caption}</span>
+              </p>
+            )}
             {scene === 'loading' && (
               <div className="story-loading" role="status">
                 <div className="loading-dots" aria-hidden="true">
