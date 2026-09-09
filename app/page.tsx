@@ -174,7 +174,7 @@ export default function Home() {
       if (active) setSlow(true);
     }, 8000);
     const art = Promise.all(
-      Object.values(config.artwork).map((src) =>
+      [...Object.values(config.artwork), config.brand.logoWeb].map((src) =>
         preloadImage(src, lifecycle.signal),
       ),
     )
@@ -198,7 +198,7 @@ export default function Home() {
       cover,
       instance.preload(),
       new Promise((resolve) => {
-        minimumDelay = setTimeout(resolve, 650);
+        minimumDelay = setTimeout(resolve, 2600);
       }),
     ]).then(([ready]) => {
       if (active) {
@@ -584,7 +584,25 @@ export default function Home() {
           <div
             className={`stage ${offering ? 'stage-offering' : ''} ${showingVideo ? 'video-stage' : ''} ${showingGift ? 'gift-backdrop-stage' : ''}`}
           >
-            <div className="room" aria-hidden="true">
+            {scene === 'loading' && (
+              <div className="loading-emblem" aria-hidden="true">
+                <picture>
+                  <source srcSet={config.brand.logoWeb} type="image/webp" />
+                  <img
+                    src={config.brand.logoIcon}
+                    srcSet={`${config.brand.logoIcon} 192w, ${config.brand.logoFull} 2048w`}
+                    sizes="(max-width: 480px) 192px, 300px"
+                    alt=""
+                  />
+                </picture>
+                <span className="loading-emblem-glow" />
+              </div>
+            )}
+            <div
+              className="room"
+              aria-hidden="true"
+              hidden={scene === 'loading'}
+            >
               <img
                 className="hallway-art"
                 src={config.artwork.hallway}

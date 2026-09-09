@@ -4,6 +4,11 @@ const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? '').replace(/\/$/, '');
 const asset = (path) => `${basePath}${path}`;
 
 const config = {
+  brand: {
+    logoIcon: asset('/images/brand/class-emblem-icon.png'),
+    logoWeb: asset('/images/brand/class-emblem-web.webp'),
+    logoFull: asset('/images/brand/class-emblem.png'),
+  },
   emojis: [
     '🐯',
     '🦌',
