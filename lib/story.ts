@@ -2,8 +2,6 @@ export type Locale = 'zh' | 'en';
 export type Scene =
   | 'loading'
   | 'permission'
-  | 'card'
-  | 'card-opening'
   | 'waiting'
   | 'knocking'
   | 'noticed'
@@ -31,7 +29,6 @@ export type Scene =
 export type StoryEvent =
   | 'LOADED'
   | 'ENTER'
-  | 'OPEN_CARD'
   | 'NEXT'
   | 'OPEN'
   | 'REFUSE'
@@ -43,7 +40,6 @@ export type StoryEvent =
   | 'CONTINUE_GIFT'
   | 'REPLAY';
 const next: Partial<Record<Scene, Scene>> = {
-  'card-opening': 'waiting',
   waiting: 'knocking',
   knocking: 'noticed',
   noticed: 'choice',
@@ -61,8 +57,7 @@ const next: Partial<Record<Scene, Scene>> = {
 };
 export function storyReducer(scene: Scene, event: StoryEvent): Scene {
   if (event === 'LOADED' && scene === 'loading') return 'permission';
-  if (event === 'ENTER' && scene === 'permission') return 'card';
-  if (event === 'OPEN_CARD' && scene === 'card') return 'card-opening';
+  if (event === 'ENTER' && scene === 'permission') return 'waiting';
   if (event === 'OPEN' && (scene === 'choice' || scene === 'refuse'))
     return 'opening';
   if (event === 'REFUSE' && scene === 'choice') return 'auto0';
@@ -87,7 +82,6 @@ export function sceneDelay(
 ): number | undefined {
   return (
     {
-      'card-opening': 1450,
       waiting: 1000,
       knocking: 1200,
       noticed: 1000,

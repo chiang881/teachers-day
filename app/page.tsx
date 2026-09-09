@@ -9,7 +9,6 @@ import {
   type PointerEvent,
 } from 'react';
 import {
-  ArrowRight,
   ArrowUp,
   Music2,
   Pause,
@@ -79,12 +78,6 @@ const firstAudio: AudioState = {
   videoPlaying: false,
   doorOpened: false,
 };
-const introReels = [
-  ['2', '4', '7', '0'],
-  ['1', '3', '6', '9'],
-  ['8', '5', '3', '1'],
-  ['6', '4', '2', '0'],
-] as const;
 function preloadImage(src: string, signal: AbortSignal): Promise<void> {
   return new Promise((resolve, reject) => {
     const image = new Image();
@@ -122,7 +115,6 @@ export default function Home() {
     [coverFailed, setCoverFailed] = useState(false);
   const [progress, setProgress] = useState(0),
     [dragging, setDragging] = useState(false);
-  const [landingStarted, setLandingStarted] = useState(false);
   const [achievementVisible, setAchievementVisible] = useState(false);
   const engine = useRef<GreetingAudio | null>(null),
     sceneRef = useRef<Scene>(scene),
@@ -234,7 +226,6 @@ export default function Home() {
         timers.push(setTimeout(() => engine.current?.effect('knock'), delay));
     if (scene === 'opening' || scene === 'auto2')
       engine.current?.effect('click');
-    if (scene === 'card-opening') engine.current?.effect('celebrate');
     if (scene === 'empty') engine.current?.opened();
     if (scene === 'gift-opening' || scene === 'letter-transition') {
       engine.current?.effect('celebrate');
@@ -254,11 +245,6 @@ export default function Home() {
     if (withSound) void engine.current?.enable();
     else engine.current?.disable();
     dispatch('ENTER');
-  }, []);
-  const openCard = useCallback(() => {
-    if (sceneRef.current !== 'card') return;
-    sceneRef.current = 'card-opening';
-    dispatch('OPEN_CARD');
   }, []);
   const refuseOffice = useCallback(() => {
     if (sceneRef.current !== 'choice') return;
@@ -364,13 +350,7 @@ export default function Home() {
         properties: {
           action: {
             type: 'string',
-            enum: [
-              'enter_silently',
-              'open_card',
-              'open_door',
-              'refuse_door',
-              'open_letter',
-            ],
+            enum: ['enter_silently', 'open_door', 'refuse_door', 'open_letter'],
           },
         },
         required: ['action'],
@@ -381,7 +361,6 @@ export default function Home() {
         const action = (input as { action?: string })?.action;
         const events: Record<string, StoryEvent> = {
           enter_silently: 'ENTER',
-          open_card: 'OPEN_CARD',
           open_door: 'OPEN',
           refuse_door: 'REFUSE',
           open_letter: 'UNSEAL',
@@ -393,7 +372,6 @@ export default function Home() {
         )
           throw new Error('Action unavailable in this scene');
         if (action === 'enter_silently') enter(false);
-        else if (action === 'open_card') openCard();
         else if (action === 'open_letter') unseal();
         else if (action === 'refuse_door' && sceneRef.current === 'choice')
           refuseOffice();
@@ -403,7 +381,7 @@ export default function Home() {
       },
     });
     return () => lifecycle.abort();
-  }, [enter, openCard, refuseOffice, unseal]);
+  }, [enter, refuseOffice, unseal]);
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (
       scene !== 'envelope' ||
@@ -471,7 +449,9 @@ export default function Home() {
       ? t.ui.pause
       : t.ui.play;
   let caption = t.story.waiting;
-  if (scene === 'knocking' || scene === 'noticed' || scene === 'choice')
+  if (scene === 'loading') caption = localized ? t.ui.loading : '…';
+  else if (scene === 'permission') caption = t.ui.soundNote;
+  else if (scene === 'knocking' || scene === 'noticed' || scene === 'choice')
     caption = t.story.knockingText;
   else if (scene === 'refuse') caption = t.story.refuseText;
   else if (scene.startsWith('auto'))
@@ -562,140 +542,7 @@ export default function Home() {
           </div>
         </div>
       </header>
-      {scene === 'loading' || scene === 'permission' ? (
-        <section
-          className={`intro-landing ${scene === 'permission' ? 'is-ready' : ''} ${landingStarted ? 'is-started' : ''}`}
-          aria-busy={scene === 'loading'}
-        >
-          <p className="intro-sound-note">{t.ui.landingSound}</p>
-          <div className="intro-date" aria-hidden="true">
-            <div className="intro-counter">
-              {introReels.map((reel, index) => (
-                <span
-                  className="intro-reel"
-                  key={index}
-                  style={
-                    {
-                      '--reel-steps': reel.length - 1,
-                      '--reel-delay': `${index * 90}ms`,
-                    } as CSSProperties
-                  }
-                >
-                  <i>
-                    {reel.map((digit, digitIndex) => (
-                      <b key={`${digit}-${digitIndex}`}>{digit}</b>
-                    ))}
-                  </i>
-                </span>
-              ))}
-              <em>·</em>
-            </div>
-            <p>{t.ui.landingDate}</p>
-          </div>
-          {scene === 'loading' && (
-            <div className="intro-loading" role="status">
-              <span className="intro-loading-line" aria-hidden="true">
-                <i />
-              </span>
-              <p>{localized ? t.ui.landingLoading : '…'}</p>
-              {(slow || artFailed) && (
-                <div className="intro-recovery">
-                  <span>{artFailed ? t.ui.artError : t.ui.slow}</span>
-                  <button
-                    type="button"
-                    onClick={() => setAttempt((value) => value + 1)}
-                  >
-                    <RotateCcw size={15} />
-                    {t.ui.retry}
-                  </button>
-                  {artReady && (
-                    <button type="button" onClick={() => dispatch('LOADED')}>
-                      {t.ui.continueSilent}
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-          {scene === 'permission' && !landingStarted && (
-            <button
-              type="button"
-              className="intro-start"
-              onClick={() => setLandingStarted(true)}
-            >
-              <span>{t.ui.landingStart}</span>
-            </button>
-          )}
-          {scene === 'permission' && landingStarted && (
-            <div className="intro-entry">
-              <p>{t.ui.landingChoose}</p>
-              {audio.failed && (
-                <span className="intro-audio-error">{t.ui.musicError}</span>
-              )}
-              <div className="intro-entry-buttons">
-                <button
-                  type="button"
-                  disabled={audio.failed}
-                  onClick={() => enter(true)}
-                >
-                  <Volume2 size={18} />
-                  {t.ui.enable}
-                </button>
-                <button type="button" onClick={() => enter(false)}>
-                  <VolumeX size={17} />
-                  {t.ui.silent}
-                </button>
-              </div>
-              <span className="intro-later">{t.ui.later}</span>
-            </div>
-          )}
-          <span className="intro-corner intro-corner-left" aria-hidden="true">
-            09
-          </span>
-          <span className="intro-corner intro-corner-right" aria-hidden="true">
-            10
-          </span>
-        </section>
-      ) : scene === 'card' || scene === 'card-opening' ? (
-        <section className="card-portal">
-          <p className="card-portal-kicker">{t.ui.landingDate}</p>
-          <div className="card-stage">
-            <div className="card-inside" aria-hidden="true">
-              <Sparkles size={28} />
-              <Heart size={36} fill="currentColor" />
-              <strong>{t.ui.cardInside}</strong>
-              <span>09 · 10</span>
-            </div>
-            <button
-              type="button"
-              className="card-cover"
-              disabled={scene !== 'card'}
-              onClick={openCard}
-              aria-label={t.ui.cardOpen}
-            >
-              <img src={config.artwork.card} alt={t.ui.cardOpen} />
-            </button>
-            <div className="card-opening-light" aria-hidden="true">
-              <i />
-              <i />
-              <i />
-            </div>
-          </div>
-          <p className="card-open-prompt" role="status">
-            {scene === 'card' ? t.ui.cardOpen : t.ui.cardOpening}
-          </p>
-          {scene === 'card' && (
-            <button
-              type="button"
-              className="card-open-action"
-              onClick={openCard}
-            >
-              <span>{t.ui.cardOpen}</span>
-              <ArrowRight size={17} />
-            </button>
-          )}
-        </section>
-      ) : showingLetter ? (
+      {showingLetter ? (
         <section className="reading-scene">
           <article
             ref={letter}
@@ -732,7 +579,8 @@ export default function Home() {
         </section>
       ) : (
         <section
-          className={`story-scene ${offering ? 'is-offering' : ''} ${showingVideo ? 'video-backdrop' : ''} ${showingGift ? 'gift-scene' : ''}`}
+          className={`story-scene ${scene === 'loading' || scene === 'permission' ? 'is-entry' : ''} ${offering ? 'is-offering' : ''} ${showingVideo ? 'video-backdrop' : ''} ${showingGift ? 'gift-scene' : ''}`}
+          aria-busy={scene === 'loading'}
         >
           <div
             className={`stage ${offering ? 'stage-offering' : ''} ${showingVideo ? 'video-stage' : ''} ${showingGift ? 'gift-backdrop-stage' : ''}`}
@@ -867,6 +715,64 @@ export default function Home() {
               )}
               <span>{caption}</span>
             </p>
+            {scene === 'loading' && (
+              <div className="story-loading" role="status">
+                <div className="loading-dots" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                </div>
+                {(slow || artFailed) && (
+                  <div className="story-recovery">
+                    <span>{artFailed ? t.ui.artError : t.ui.slow}</span>
+                    <button
+                      type="button"
+                      className="text-button"
+                      onClick={() => setAttempt((value) => value + 1)}
+                    >
+                      <RotateCcw size={15} />
+                      {t.ui.retry}
+                    </button>
+                    {artReady && (
+                      <button
+                        type="button"
+                        className="text-button"
+                        onClick={() => dispatch('LOADED')}
+                      >
+                        {t.ui.continueSilent}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+            {scene === 'permission' && (
+              <div className="story-entry">
+                {audio.failed && (
+                  <span className="story-entry-error">{t.ui.musicError}</span>
+                )}
+                <div className="story-entry-buttons">
+                  <button
+                    type="button"
+                    className="primary-button"
+                    disabled={audio.failed}
+                    onClick={() => enter(true)}
+                  >
+                    <Volume2 size={18} />
+                    {t.ui.enable}
+                  </button>
+                  <button
+                    type="button"
+                    className="text-button"
+                    onClick={() => enter(false)}
+                  >
+                    <VolumeX size={16} />
+                    {t.ui.silent}
+                  </button>
+                </div>
+                <span className="story-entry-later">{t.ui.later}</span>
+              </div>
+            )}
             {scene === 'choice' && (
               <div className="choice-buttons">
                 <button

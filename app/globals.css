@@ -801,6 +801,52 @@ h1 {
   max-width: 100%;
   color: #785137;
 }
+.story-loading,
+.story-entry {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.story-loading .loading-dots {
+  margin: 2px 0 8px;
+}
+.story-recovery {
+  max-width: 520px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 10px;
+  color: #876950;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.story-entry {
+  gap: 9px;
+  animation: soft-in 0.4s both;
+}
+.story-entry-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.story-entry-buttons .primary-button {
+  min-width: 220px;
+  justify-content: center;
+}
+.story-entry-error,
+.story-entry-later {
+  max-width: 340px;
+  color: #9a816a;
+  font-size: 12px;
+  line-height: 1.55;
+  text-align: center;
+}
+.story-entry-error {
+  color: #a74431;
+}
 .choice-buttons {
   display: flex;
   flex-direction: column;
@@ -2188,55 +2234,7 @@ h1 {
   }
 }
 
-/* Intro inspired by the reference site's bold counter and restrained framing. */
-.greeting[data-scene='loading'],
-.greeting[data-scene='permission'],
-.greeting[data-scene='card'],
-.greeting[data-scene='card-opening'] {
-  min-height: 100svh;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 46%, #25324c 0, #121a30 42%, #0d1429 72%),
-    #0d1429;
-  color: #cce8eb;
-}
-.greeting[data-scene='loading'] .topbar,
-.greeting[data-scene='permission'] .topbar,
-.greeting[data-scene='card'] .topbar,
-.greeting[data-scene='card-opening'] .topbar {
-  border-bottom-color: #cce8eb24;
-  background: #0d1429d9;
-  box-shadow: none;
-  color: #cce8eb;
-  backdrop-filter: blur(14px);
-}
-.greeting[data-scene='loading'] .brand svg,
-.greeting[data-scene='permission'] .brand svg,
-.greeting[data-scene='card'] .brand svg,
-.greeting[data-scene='card-opening'] .brand svg {
-  color: #cce8eb;
-}
-.greeting[data-scene='loading'] .language button,
-.greeting[data-scene='permission'] .language button,
-.greeting[data-scene='card'] .language button,
-.greeting[data-scene='card-opening'] .language button {
-  color: #7f9ba4;
-}
-.greeting[data-scene='loading'] .language button[aria-pressed='true'],
-.greeting[data-scene='permission'] .language button[aria-pressed='true'],
-.greeting[data-scene='card'] .language button[aria-pressed='true'],
-.greeting[data-scene='card-opening'] .language button[aria-pressed='true'] {
-  color: #cce8eb;
-}
-.greeting[data-scene='loading'] .record,
-.greeting[data-scene='permission'] .record,
-.greeting[data-scene='card'] .record,
-.greeting[data-scene='card-opening'] .record {
-  border-color: #cce8eb;
-  box-shadow:
-    0 0 0 1px #0d1429,
-    0 0 18px #a5d8dd35;
-}
+/* Loading and sound permission now sit inside the office story scene. */
 .intro-landing {
   min-height: calc(100svh - 96px);
   position: relative;

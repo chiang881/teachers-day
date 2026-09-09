@@ -17,15 +17,7 @@ function travel(actions: StoryEvent[]) {
   for (const event of actions) scene = storyReducer(scene, event);
   return scene;
 }
-const toChoice: StoryEvent[] = [
-  'LOADED',
-  'ENTER',
-  'OPEN_CARD',
-  'NEXT',
-  'NEXT',
-  'NEXT',
-  'NEXT',
-];
+const toChoice: StoryEvent[] = ['LOADED', 'ENTER', 'NEXT', 'NEXT', 'NEXT'];
 for (const [name, branch] of [
   ['direct', ['OPEN']],
   ['reconsider', ['REFUSE', 'NEXT', 'OPEN']],
@@ -76,17 +68,13 @@ for (const [name, branch] of [
 }
 test('Cannot skip loading, grant entry twice or unseal a closed office', () => {
   assert.equal(travel(['ENTER', 'OPEN', 'UNSEAL']), 'loading');
-  assert.equal(travel(['LOADED', 'ENTER', 'ENTER', 'UNSEAL']), 'card');
+  assert.equal(travel(['LOADED', 'ENTER', 'ENTER', 'UNSEAL']), 'waiting');
 });
-test('The selected sound mode reveals one card, which must open before the story', () => {
-  assert.equal(storyReducer('permission', 'ENTER'), 'card');
-  assert.equal(storyReducer('card', 'ENTER'), 'card');
-  assert.equal(storyReducer('card', 'NEXT'), 'card');
-  assert.equal(storyReducer('card', 'OPEN_CARD'), 'card-opening');
-  assert.equal(storyReducer('card-opening', 'OPEN_CARD'), 'card-opening');
-  assert.equal(sceneDelay('card', 25), undefined);
-  assert.equal(sceneDelay('card-opening', 25), 1450);
-  assert.equal(storyReducer('card-opening', 'NEXT'), 'waiting');
+test('The selected sound mode enters the office story directly', () => {
+  assert.equal(storyReducer('permission', 'ENTER'), 'waiting');
+  assert.equal(storyReducer('waiting', 'ENTER'), 'waiting');
+  assert.equal(sceneDelay('permission', 25), undefined);
+  assert.equal(sceneDelay('waiting', 25), 1000);
 });
 test('The empty-office reply reveals the speaker before offering two equal paths', () => {
   assert.equal(storyReducer('choice', 'REFUSE'), 'auto0');
@@ -94,7 +82,7 @@ test('The empty-office reply reveals the speaker before offering two equal paths
   assert.equal(storyReducer('auto0', 'NEXT'), 'refuse');
   assert.equal(storyReducer('refuse', 'OPEN'), 'opening');
   assert.equal(storyReducer('refuse', 'REFUSE'), 'auto1');
-  assert.equal(travel(['LOADED', 'ENTER']), 'card');
+  assert.equal(travel(['LOADED', 'ENTER']), 'waiting');
   assert.equal(
     travel([...toChoice, 'REFUSE', 'NEXT', 'REFUSE', 'NEXT', 'NEXT', 'NEXT']),
     'opening',
