@@ -1365,12 +1365,6 @@ h1 {
 .gift-sprite-base img {
   transform: translateY(-50%);
 }
-.gift-sprite-closed-base {
-  top: 37%;
-}
-.gift-sprite-closed-base img {
-  transform: translateY(-78%);
-}
 .gift-sprite-lid {
   top: 6%;
   z-index: 2;

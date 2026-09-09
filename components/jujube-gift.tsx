@@ -49,9 +49,6 @@ export default function JujubeGift({
             onClick={onOpen}
             aria-label={t.open}
           >
-            <div className="gift-sprite gift-sprite-base gift-sprite-closed-base">
-              <img src={config.gift.artwork} alt="" draggable={false} />
-            </div>
             <div className="gift-sprite gift-sprite-lid">
               <img src={config.gift.artwork} alt="" draggable={false} />
             </div>
