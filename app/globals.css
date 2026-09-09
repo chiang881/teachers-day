@@ -1369,6 +1369,9 @@ h1 {
   top: 6%;
   z-index: 2;
 }
+.gift-sprite-lid img {
+  clip-path: inset(0 0 50% 0);
+}
 .gift-box-button .gift-sprite-lid {
   top: 12%;
 }
