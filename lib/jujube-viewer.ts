@@ -188,18 +188,9 @@ export function createJujubeViewer(host: HTMLElement, options: Options) {
       if (geometries.size === 0) throw new Error('Empty gift model');
       const normalized = new Group();
       normalized.add(model);
-      normalized.scale.setScalar(2.05 / longestSide);
-      for (const [x, y, z, scale, tilt] of [
-        [-0.85, -0.14, 0, 0.85, -0.5],
-        [0, 0.25, -0.1, 1, 0.16],
-        [0.9, -0.2, 0.15, 0.82, 0.6],
-      ]) {
-        const fruit = normalized.clone(true);
-        fruit.position.set(x, y, z);
-        fruit.scale.multiplyScalar(scale);
-        fruit.rotation.set(0.15, x * 1.4, tilt);
-        dates.add(fruit);
-      }
+      normalized.scale.setScalar(3.25 / longestSide);
+      normalized.rotation.set(0.12, 0, -0.08);
+      dates.add(normalized);
       // Check the imported geometry is finite before giving it to WebGL.
       const bounds = new Box3().setFromObject(dates);
       if (!Number.isFinite(bounds.max.x))
